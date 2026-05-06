@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Deal Screener"/>
+<meta name="theme-color" content="#1a1a1a"/>
+<title>Off-Market Deal Screener</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --ink: #1a1a1a;
+  --ink2: #3d3d3d;
+  --ink3: #7a7a7a;
+  --ink4: #b0b0b0;
+  --paper: #f5f0e8;
+  --paper2: #ede8dc;
+  --paper3: #e4ddd0;
+  --rule: #d4cdc0;
+  --rule2: #c0b9ac;
+  --red: #c0392b;
+  --green: #1a6b3a;
+  --amber: #b35c00;
+  --blue: #1a3d6b;
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); min-height: 100vh; font-size: 15px; line-height: 1.6; padding-bottom: env(safe-area-inset-bottom); }
+
+.settings-bar { background: var(--ink); color: var(--paper); padding: 10px 20px; padding-top: calc(10px + env(safe-area-inset-top)); display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+.settings-bar label { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink4); white-space: nowrap; flex-shrink: 0; }
+.settings-bar input { flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 7px 10px; color: var(--paper); font-family: var(--mono); font-size: 12px; outline: none; min-width: 0; }
+.settings-bar input:focus { border-color: rgba(255,255,255,0.4); }
+.settings-bar input::placeholder { color: rgba(255,255,255,0.25); }
+.settings-bar .sheets-btn { background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 6px 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; border-radius: 3px; transition: all 0.15s; }
+.settings-bar .sheets-btn:hover, .settings-bar .sheets-btn.configured { border-color: #4ade80; color: #4ade80; }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--paper); border: 1px solid var(--rule2); padding: 28px; max-width: 480px; width: 100%; border-radius: 2px; }
+.modal h3 { font-family: var(--serif); font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.modal p { font-size: 13px; color: var(--ink3); margin-bottom: 20px; font-family: var(--mono); line-height: 1.6; }
+.modal .field { margin-bottom: 14px; }
+.modal .field label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink3); margin-bottom: 6px; }
+.modal .field input { width: 100%; background: var(--paper2); border: 1px solid var(--rule2); border-radius: 1px; padding: 9px 12px; font-family: var(--mono); font-size: 12px; color: var(--ink); outline: none; }
+.modal .field input:focus { border-color: var(--ink2); }
+.modal .field .hint { font-size: 11px; color: var(--ink4); margin-top: 5px; font-family: var(--mono); }
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+.modal-save { flex: 1; padding: 11px; background: var(--ink); color: var(--paper); border: none; font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; border-radius: 1px; }
+.modal-cancel { padding: 11px 18px; background: none; border: 1px solid var(--rule2); font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; color: var(--ink3); border-radius: 1px; }
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 48px 20px 100px; }
+.masthead { border-top: 3px solid var(--ink); border-bottom: 1px solid var(--rule2); padding: 20px 0 18px; margin-bottom: 32px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.masthead-left h1 { font-family: var(--serif); font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; margin-bottom: 4px; }
+.masthead-left .sub { font-family: var(--mono); font-size: 10px; color: var(--ink3); letter-spacing: 2px; text-transform: uppercase; }
+.masthead-right { font-family: var(--mono); font-size: 10px; color: var(--ink3); text-align: right; letter-spacing: 1px; line-height: 1.8; text-transform: uppercase; }
+
+.section-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink3); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+.input-panel { background: var(--paper2); border: 1px solid var(--rule2); border-radius: 2px; padding: 22px; margin-bottom: 24px; }
+.field-row { display: grid; gap: 14px; margin-bottom: 14px; }
+.field-row.cols-2 { grid-template-columns: 1fr 1fr; }
+.field label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink3); margin-bottom: 6px; }
+.field .hint { font-size: 11px; color: var(--ink4); margin-top: 5px; font-family: var(--mono); }
+.field input, .field textarea { width: 100%; background: var(--paper); border: 1px solid var(--rule2); border-radius: 1px; padding: 9px 12px; font-family: var(--sans); font-size: 15px; color: var(--ink); outline: none; transition: border-color 0.15s; resize: vertical; -webkit-appearance: none; }
+.field input:focus, .field textarea:focus { border-color: var(--ink2); }
+.field input::placeholder, .field textarea::placeholder { color: var(--ink4); }
+.field textarea { min-height: 90px; font-size: 14px; line-height: 1.6; }
+
+.buybox-toggle { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--blue); cursor: pointer; background: none; border: none; padding: 0; margin: 18px 0 0; display: flex; align-items: center; gap: 6px; }
+.buybox-panel { margin-top: 14px; padding: 18px; background: var(--paper3); border: 1px dashed var(--rule2); display: none; }
+.buybox-panel.open { display: block; }
+.buybox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+.run-btn { width: 100%; margin-top: 20px; padding: 16px 24px; background: var(--ink); color: var(--paper); border: none; border-radius: 1px; font-family: var(--mono); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.15s; -webkit-appearance: none; touch-action: manipulation; }
+.run-btn:active { background: var(--ink2); }
+.run-btn:disabled { background: var(--ink4); cursor: not-allowed; }
+
+.loading { display: none; padding: 50px 0; text-align: center; }
+.loading.on { display: block; }
+.loading-name { font-family: var(--serif); font-size: 20px; font-weight: 600; font-style: italic; margin-bottom: 20px; }
+.progress-lines { list-style: none; }
+.progress-lines li { font-family: var(--mono); font-size: 11px; color: var(--ink3); letter-spacing: 1px; padding: 5px 0; opacity: 0; animation: lineIn 0.4s forwards; text-transform: uppercase; }
+.progress-lines li::before { content: '‚Üí '; color: var(--ink4); }
+.progress-lines li:nth-child(1) { animation-delay: 0.4s; }
+.progress-lines li:nth-child(2) { animation-delay: 1.8s; }
+.progress-lines li:nth-child(3) { animation-delay: 3.5s; }
+.progress-lines li:nth-child(4) { animation-delay: 5.5s; }
+.progress-lines li:nth-child(5) { animation-delay: 7.5s; }
+.progress-lines li:nth-child(6) { animation-delay: 9.5s; }
+@keyframes lineIn { to { opacity: 1; } }
+
+.error-strip { display: none; background: #fdf0ee; border: 1px solid #e8c0bb; padding: 14px 18px; font-family: var(--mono); font-size: 12px; color: var(--red); margin-top: 14px; line-height: 1.6; }
+.error-strip.on { display: block; }
+
+.results { display: none; }
+.results.on { display: block; }
+
+.verdict-bar { border-top: 2px solid var(--ink); padding: 20px 0 16px; margin-bottom: 24px; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.verdict-company { font-family: var(--serif); font-size: 24px; font-weight: 700; line-height: 1.15; margin-bottom: 6px; }
+.verdict-meta { font-family: var(--mono); font-size: 10px; color: var(--ink3); letter-spacing: 1px; text-transform: uppercase; line-height: 1.8; }
+.verdict-right { text-align: right; flex-shrink: 0; }
+.verdict-score { font-family: var(--serif); font-size: 58px; font-weight: 600; line-height: 1; letter-spacing: -2px; }
+.verdict-score.A { color: var(--green); }
+.verdict-score.B { color: var(--blue); }
+.verdict-score.C { color: var(--amber); }
+.verdict-score.D, .verdict-score.F { color: var(--red); }
+.verdict-label { font-family: var(--mono); font-size: 10px; color: var(--ink3); letter-spacing: 1.5px; text-transform: uppercase; }
+.verdict-tag { display: inline-block; margin-top: 8px; padding: 5px 10px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; border: 1px solid currentColor; }
+.tag-proceed { color: var(--green); }
+.tag-monitor { color: var(--amber); }
+.tag-pass { color: var(--red); }
+
+.dim-strip { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--rule2); margin-bottom: 24px; overflow: hidden; }
+.dim-cell { padding: 12px 10px; border-right: 1px solid var(--rule2); border-bottom: 1px solid var(--rule2); text-align: center; }
+.dim-cell:nth-child(3n) { border-right: none; }
+.dim-cell:nth-child(4), .dim-cell:nth-child(5), .dim-cell:nth-child(6) { border-bottom: none; }
+.dim-score-num { font-family: var(--serif); font-size: 24px; font-weight: 600; line-height: 1; margin-bottom: 5px; }
+.dim-score-num.hi { color: var(--green); }
+.dim-score-num.mid { color: var(--amber); }
+.dim-score-num.lo { color: var(--red); }
+.dim-name { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); line-height: 1.3; }
+
+.content-cols { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--rule); margin-bottom: 1px; }
+@media (min-width: 600px) { .content-cols { grid-template-columns: 1fr 1fr; } }
+.content-block { background: var(--paper); padding: 20px; }
+.content-block.full { grid-column: 1 / -1; }
+.block-head { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink3); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+.block-body { font-size: 13.5px; line-height: 1.75; color: var(--ink2); }
+.block-body ul { padding-left: 0; list-style: none; }
+.block-body ul li { padding: 5px 0 5px 18px; position: relative; border-bottom: 1px solid var(--paper3); }
+.block-body ul li:last-child { border-bottom: none; }
+.block-body ul li::before { content: '‚Äî'; position: absolute; left: 0; color: var(--ink4); }
+
+.profile-table { width: 100%; border-collapse: collapse; }
+.profile-table tr { border-bottom: 1px solid var(--paper3); }
+.profile-table tr:last-child { border-bottom: none; }
+.profile-table td { padding: 7px 4px; font-size: 13px; vertical-align: top; }
+.profile-table td:first-child { font-family: var(--mono); font-size: 10px; color: var(--ink3); text-transform: uppercase; width: 42%; padding-right: 10px; padding-top: 9px; letter-spacing: 0.3px; }
+.profile-table td:last-child { color: var(--ink); font-weight: 500; }
+
+.rec-block { background: var(--ink); color: var(--paper); padding: 22px; margin-top: 1px; }
+.rec-head { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink4); margin-bottom: 12px; }
+.rec-text { font-family: var(--serif); font-size: 16px; line-height: 1.75; font-weight: 300; }
+
+.sheets-status { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+.sheets-status.ok { color: var(--green); }
+.sheets-status.fail { color: var(--red); }
+
+.action-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.act-btn { padding: 11px 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; border: 1px solid var(--rule2); background: var(--paper); color: var(--ink2); transition: all 0.15s; touch-action: manipulation; border-radius: 1px; }
+.act-btn:active { background: var(--paper3); }
+.act-btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.pipeline-wrap { margin-top: 48px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.pipeline-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.pipeline-clear { font-family: var(--mono); font-size: 10px; color: var(--ink4); cursor: pointer; background: none; border: none; letter-spacing: 1px; text-transform: uppercase; }
+.pipeline-clear:hover { color: var(--red); }
+.pipeline-cards { display: flex; flex-direction: column; gap: 10px; }
+.pipeline-card { background: var(--paper2); border: 1px solid var(--rule); padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+.pipeline-grade { font-family: var(--serif); font-size: 20px; font-weight: 700; border: 1px solid currentColor; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pipeline-info { flex: 1; min-width: 0; }
+.pipeline-co { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pipeline-sub { font-family: var(--mono); font-size: 10px; color: var(--ink3); letter-spacing: 0.5px; margin-top: 3px; }
+.pipeline-score { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--ink3); flex-shrink: 0; }
+.gA { color: var(--green); } .gB { color: var(--blue); } .gC { color: var(--amber); } .gD, .gF { color: var(--red); }
+.pipeline-empty { padding: 24px 0; font-family: var(--mono); font-size: 11px; color: var(--ink4); letter-spacing: 1px; text-transform: uppercase; }
+
+.toast { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 12px 20px; white-space: nowrap; opacity: 0; transition: all 0.25s; z-index: 300; border-radius: 2px; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="settings-bar">
+  <label>API Key</label>
+  <input id="api-key-input" type="password" placeholder="sk-ant-..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+  <button class="sheets-btn" id="sheets-config-btn" onclick="openModal()">Sheets ‚öô</button>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3>Google Sheets Setup</h3>
+    <p>Paste your Apps Script Web App URL. Results will be written automatically after each analysis.</p>
+    <div class="field">
+      <label>Apps Script Web App URL</label>
+      <input id="modal-url" type="text" placeholder="https://script.google.com/macros/s/.../exec"/>
+      <div class="hint">In your Sheet: Extensions ‚Üí Apps Script ‚Üí Deploy ‚Üí New Deployment ‚Üí Web App ‚Üí Anyone ‚Üí Deploy ‚Üí Copy URL</div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-save" onclick="saveSheets()">Save</button>
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="masthead-left">
+      <h1>Off-Market Deal Screener</h1>
+      <div class="sub">ETA Research Engine ¬∑ Independent Sponsor</div>
+    </div>
+    <div class="masthead-right">Mid-Atlantic / Northeast<br><span id="today-date"></span></div>
+  </div>
+
+  <div class="section-label">Company Inputs</div>
+  <div class="input-panel">
+    <div class="field-row cols-2">
+      <div class="field">
+        <label>Company Name *</label>
+        <input id="co-name" type="text" placeholder="Tri-State Mechanical LLC" autocorrect="off"/>
+      </div>
+      <div class="field">
+        <label>Industry / Trade</label>
+        <input id="co-industry" type="text" placeholder="HVAC, Plumbing, Electrical‚Ä¶" autocorrect="off"/>
+      </div>
+    </div>
+    <div class="field-row cols-2">
+      <div class="field">
+        <label>Address / City, State</label>
+        <input id="co-address" type="text" placeholder="Toms River, NJ"/>
+      </div>
+      <div class="field">
+        <label>Website (if known)</label>
+        <input id="co-url" type="url" placeholder="https://..." autocorrect="off" autocapitalize="none"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Notes / Google Business Info</label>
+        <textarea id="co-notes" placeholder="Paste anything ‚Äî Google Business description, review snippets, employee count, services, anything from a drive-by or conversation. Leave blank for full cold research."></textarea>
+        <div class="hint">The less you know, the more Claude researches.</div>
+      </div>
+    </div>
+    <button class="buybox-toggle" id="bb-toggle" onclick="toggleBB()">‚ñ∏ Buy Box Parameters</button>
+    <div class="buybox-panel" id="bb-panel">
+      <div class="buybox-grid">
+        <div class="field"><label>Revenue Range</label><input id="bb-rev" value="$1M ‚Äì $8M"/></div>
+        <div class="field"><label>EBITDA Minimum</label><input id="bb-ebitda" value="$250K+"/></div>
+        <div class="field"><label>Min EBITDA Margin</label><input id="bb-margin" value="15%+"/></div>
+        <div class="field"><label>Target Verticals</label><input id="bb-verticals" value="Field services, B2B, Distribution"/></div>
+        <div class="field"><label>Geography</label><input id="bb-geo" value="Mid-Atlantic, Northeast US"/></div>
+        <div class="field"><label>Entry Multiple Cap</label><input id="bb-multiple" value="4‚Äì6√ó EBITDA"/></div>
+      </div>
+    </div>
+    <button class="run-btn" id="run-btn" onclick="runScreen()">Run Deal Screen</button>
+  </div>
+
+  <div class="error-strip" id="err-strip"></div>
+
+  <div class="loading" id="loading">
+    <div class="loading-name" id="loading-name"></div>
+    <ul class="progress-lines" id="progress-lines">
+      <li>Searching company history &amp; web presence</li>
+      <li>Researching ownership, reviews &amp; reputation</li>
+      <li>Sizing industry vertical &amp; local market</li>
+      <li>Estimating revenue, headcount &amp; business model</li>
+      <li>Scoring acquisition attractiveness dimensions</li>
+      <li>Generating outreach strategy &amp; investment memo</li>
+    </ul>
+  </div>
+
+  <div class="results" id="results">
+    <div class="verdict-bar">
+      <div style="min-width:0">
+        <div class="verdict-company" id="res-name"></div>
+        <div class="verdict-meta" id="res-meta"></div>
+        <div id="res-tag"></div>
+      </div>
+      <div class="verdict-right">
+        <div class="verdict-score" id="res-score"></div>
+        <div class="verdict-label">/ 100 ¬∑ Deal Score</div>
+      </div>
+    </div>
+    <div class="dim-strip" id="dim-strip"></div>
+    <div class="content-cols" id="content-cols"></div>
+    <div class="rec-block">
+      <div class="rec-head">Analyst Recommendation</div>
+      <div class="rec-text" id="rec-text"></div>
+    </div>
+    <div id="sheets-status" class="sheets-status"></div>
+    <div class="action-row">
+      <button class="act-btn primary" onclick="copyRow()">Copy Row</button>
+      <button class="act-btn" onclick="newScreen()">‚Ü© New Screen</button>
+    </div>
+  </div>
+
+  <div class="pipeline-wrap">
+    <div class="pipeline-controls">
+      <div class="section-label" style="margin:0;flex:1">Deal Pipeline</div>
+      <button class="pipeline-clear" onclick="clearPipeline()">Clear All</button>
+    </div>
+    <div id="pipeline-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+let pipeline = JSON.parse(localStorage.getItem('eta_pipeline_v3') || '[]');
+let lastResult = null;
+
+document.getElementById('today-date').textContent =
+  new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+
+const savedKey = localStorage.getItem('eta_api_key');
+if (savedKey) document.getElementById('api-key-input').value = savedKey;
+document.getElementById('api-key-input').addEventListener('change', e => {
+  localStorage.setItem('eta_api_key', e.target.value.trim());
+});
+
+const savedSheets = localStorage.getItem('eta_sheets_url');
+if (savedSheets) document.getElementById('sheets-config-btn').classList.add('configured');
+
+renderPipeline();
+
+function openModal() {
+  document.getElementById('modal-url').value = localStorage.getItem('eta_sheets_url') || '';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function saveSheets() {
+  const url = document.getElementById('modal-url').value.trim();
+  if (url) {
+    localStorage.setItem('eta_sheets_url', url);
+    document.getElementById('sheets-config-btn').classList.add('configured');
+    showToast('Sheets URL saved');
+  } else {
+    localStorage.removeItem('eta_sheets_url');
+    document.getElementById('sheets-config-btn').classList.remove('configured');
+    showToast('Sheets URL cleared');
+  }
+  closeModal();
+}
+
+function toggleBB() {
+  const p = document.getElementById('bb-panel');
+  const b = document.getElementById('bb-toggle');
+  const open = p.classList.toggle('open');
+  b.textContent = (open ? '‚ñæ ' : '‚ñ∏ ') + 'Buy Box Parameters';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function showErr(msg) {
+  const e = document.getElementById('err-strip');
+  e.innerHTML = '‚ö† ' + msg;
+  e.classList.add('on');
+  e.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function clearErr() { document.getElementById('err-strip').classList.remove('on'); }
+
+function setLoading(on, name) {
+  document.getElementById('loading').classList.toggle('on', on);
+  if (name) document.getElementById('loading-name').textContent = name;
+  if (on) {
+    const ol = document.getElementById('progress-lines');
+    const clone = ol.cloneNode(true);
+    ol.parentNode.replaceChild(clone, ol);
+    clone.id = 'progress-lines';
+  }
+}
+
+function newScreen() {
+  document.getElementById('results').classList.remove('on');
+  document.getElementById('sheets-status').textContent = '';
+  document.getElementById('run-btn').disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildPrompt(name, industry, address, url, notes) {
+  const bb = {
+    rev: document.getElementById('bb-rev').value,
+    ebitda: document.getElementById('bb-ebitda').value,
+    margin: document.getElementById('bb-margin').value,
+    verticals: document.getElementById('bb-verticals').value,
+    geo: document.getElementById('bb-geo').value,
+    multiple: document.getElementById('bb-multiple').value
+  };
+  return `You are a senior research analyst at an independent sponsor / ETA search fund. Research this potential off-market acquisition target using web search and all available public information, then produce a structured PE-grade screening memo.
+
+TARGET COMPANY
+Name: ${name}
+Industry: ${industry || 'Unknown ‚Äî infer from research'}
+Address: ${address || 'Not provided'}
+Website: ${url || 'Not provided ‚Äî search for one'}
+Additional notes: ${notes || 'None ‚Äî conduct full cold research'}
+
+BUYER BUY BOX
+Revenue: ${bb.rev} | EBITDA Min: ${bb.ebitda} | EBITDA Margin Min: ${bb.margin}
+Preferred Verticals: ${bb.verticals} | Geography: ${bb.geo} | Entry Multiple Cap: ${bb.multiple}
+
+RESEARCH INSTRUCTIONS
+Search for: official website, Google Business profile, LinkedIn, news mentions, review sites (Google Maps, Yelp, BBB), industry directories, Secretary of State filings, employee counts, estimated revenues, owner/principal names, years in business, awards or press, competitor context, local market sizing. Run multiple searches.
+
+Return ONLY valid JSON. No markdown, no code fences, no text outside the JSON.
+
+{
+  "companyName": "string",
+  "dealScore": <0-100>,
+  "grade": "A"|"B"|"C"|"D"|"F",
+  "verdict": "Strong Prospect"|"Worth Outreach"|"Monitor"|"Low Priority"|"Pass",
+  "buyBoxFit": <boolean>,
+  "estimatedProfile": {
+    "website": "string",
+    "yearsInBusiness": "string",
+    "ownerPrincipal": "string",
+    "employeeEstimate": "string",
+    "revenueEstimate": "string",
+    "businessModel": "2-sentence string",
+    "customerType": "B2B"|"B2C"|"Mixed"|"Unknown",
+    "revenueQuality": "string with 1-sentence rationale",
+    "googleRating": "string",
+    "onlinePresence": "string"
+  },
+  "dimensions": [
+    {"label":"Industry Quality","score":<0-10>,"note":"2 sentences"},
+    {"label":"Business Model","score":<0-10>,"note":"2 sentences"},
+    {"label":"Owner Dependence","score":<0-10>,"note":"2 sentences ‚Äî higher = LESS dependent"},
+    {"label":"Competitive Moat","score":<0-10>,"note":"2 sentences"},
+    {"label":"Acquirability","score":<0-10>,"note":"2 sentences"},
+    {"label":"Buy Box Alignment","score":<0-10>,"note":"2 sentences"}
+  ],
+  "positiveSignals": ["string","string","string","string"],
+  "redFlags": ["string","string","string"],
+  "researchGaps": ["string","string","string","string","string"],
+  "industryContext": "2-3 sentence string",
+  "lboFeasibility": "2-3 sentence string",
+  "outreachStrategy": "3-4 sentence string",
+  "executiveSummary": "4-5 sentence string",
+  "recommendation": "2-3 sentence string"
+}`;
+}
+
+async function runScreen() {
+  const apiKey = document.getElementById('api-key-input').value.trim();
+  const name   = document.getElementById('co-name').value.trim();
+  if (!apiKey) { showErr('Enter your Anthropic API key in the bar at the top. Get one at console.anthropic.com'); return; }
+  if (!name)   { showErr('Company name is required.'); return; }
+
+  clearErr();
+  document.getElementById('run-btn').disabled = true;
+  document.getElementById('results').classList.remove('on');
+  document.getElementById('sheets-status').textContent = '';
+  setLoading(true, name);
+
+  const industry = document.getElementById('co-industry').value.trim();
+  const address  = document.getElementById('co-address').value.trim();
+  const url      = document.getElementById('co-url').value.trim();
+  const notes    = document.getElementById('co-notes').value.trim();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        system: 'You are a senior PE research analyst. Use web search extensively before writing your analysis. Return ONLY valid JSON ‚Äî no markdown, no backticks, no text outside the JSON object.',
+        messages: [{ role: 'user', content: buildPrompt(name, industry, address, url, notes) }]
+      })
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error?.message || 'API error ' + resp.status);
+
+    const rawText = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    let result;
+    try {
+      const clean = rawText.replace(/```json|```/g, '').trim();
+      result = JSON.parse(clean.slice(clean.indexOf('{'), clean.lastIndexOf('}') + 1));
+    } catch(e) {
+      throw new Error('Could not parse analysis response. Please try again.');
+    }
+
+    lastResult = { ...result, inputIndustry: industry, inputAddress: address,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) };
+
+    setLoading(false);
+    renderResults(result, industry, address);
+    addPipeline(result, industry, address);
+    writeToSheets(result, industry, address);
+
+  } catch(err) {
+    setLoading(false);
+    showErr(err.message || 'Something went wrong. Check your connection and try again.');
+    document.getElementById('run-btn').disabled = false;
+  }
+}
+
+async function writeToSheets(r, industry, address) {
+  const sheetsUrl = localStorage.getItem('eta_sheets_url');
+  if (!sheetsUrl) return;
+  const statusEl = document.getElementById('sheets-status');
+  statusEl.textContent = '‚Üë Writing to Google Sheets...';
+  statusEl.className = 'sheets-status';
+  const payload = {
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    company: r.companyName || '', industry: industry || '', location: address || '',
+    score: r.dealScore || 0, grade: r.grade || '', verdict: r.verdict || '',
+    revenueEst: r.estimatedProfile?.revenueEstimate || '',
+    employees: r.estimatedProfile?.employeeEstimate || '',
+    owner: r.estimatedProfile?.ownerPrincipal || '',
+    googleRating: r.estimatedProfile?.googleRating || '',
+    buyBoxFit: r.buyBoxFit ? 'Yes' : 'No'
+  };
+  try {
+    await fetch(sheetsUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    statusEl.textContent = '‚úì Written to Google Sheets';
+    statusEl.className = 'sheets-status ok';
+  } catch(e) {
+    statusEl.textContent = '‚úó Sheets write failed ‚Äî check your URL in ‚öô settings';
+    statusEl.className = 'sheets-status fail';
+  }
+}
+
+function renderResults(r, industry, address) {
+  const grade = r.grade || 'C';
+  document.getElementById('res-name').textContent = r.companyName || '';
+  document.getElementById('res-meta').textContent = [r.estimatedProfile?.yearsInBusiness, r.estimatedProfile?.customerType, address ? address.split(',').slice(-2).join(',').trim() : ''].filter(Boolean).join(' ¬∑ ').toUpperCase();
+  const scoreEl = document.getElementById('res-score');
+  scoreEl.textContent = r.dealScore || 0;
+  scoreEl.className = 'verdict-score ' + grade;
+  const tagEl = document.getElementById('res-tag');
+  let tagClass = 'tag-monitor';
+  if (['Strong Prospect','Worth Outreach'].includes(r.verdict)) tagClass = 'tag-proceed';
+  else if (['Low Priority','Pass'].includes(r.verdict)) tagClass = 'tag-pass';
+  tagEl.innerHTML = `<span class="verdict-tag ${tagClass}">${r.verdict||''}</span>`;
+  if (!r.buyBoxFit) tagEl.innerHTML += `<span class="verdict-tag tag-pass" style="margin-left:8px">Outside Buy Box</span>`;
+  document.getElementById('dim-strip').innerHTML = (r.dimensions||[]).slice(0,6).map(d => {
+    const cls = d.score>=7?'hi':d.score>=5?'mid':'lo';
+    return `<div class="dim-cell" title="${esc(d.note||'')}"><div class="dim-score-num ${cls}">${d.score}</div><div class="dim-name">${esc(d.label)}</div></div>`;
+  }).join('');
+  const cols = document.getElementById('content-cols');
+  cols.innerHTML = '';
+  const p = r.estimatedProfile || {};
+  cols.innerHTML += blk('Estimated Profile', `<table class="profile-table">${trow('Website',p.website)}${trow('In Business',p.yearsInBusiness)}${trow('Owner',p.ownerPrincipal)}${trow('Employees',p.employeeEstimate)}${trow('Revenue Est.',p.revenueEstimate)}${trow('Customer Type',p.customerType)}${trow('Rev. Quality',p.revenueQuality)}${trow('Google Rating',p.googleRating)}${trow('Online',p.onlinePresence)}</table>`);
+  cols.innerHTML += blk('Business Description', `<p>${esc(p.businessModel||'‚Äî')}</p>${r.industryContext?`<p style="margin-top:12px;padding-top:12px;border-top:1px solid var(--paper3);color:var(--ink3)">${esc(r.industryContext)}</p>`:''}`);
+  if (r.positiveSignals?.length) cols.innerHTML += blk('Positive Signals', `<ul>${r.positiveSignals.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`);
+  if (r.redFlags?.length) cols.innerHTML += blk('Red Flags', `<ul>${r.redFlags.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`);
+  if (r.researchGaps?.length) cols.innerHTML += blk('Research Gaps', `<ul>${r.researchGaps.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`);
+  if (r.lboFeasibility) cols.innerHTML += blk('LBO Feasibility', `<p>${esc(r.lboFeasibility)}</p>`);
+  if (r.outreachStrategy) cols.innerHTML += blk('Outreach Strategy', `<p>${esc(r.outreachStrategy)}</p>`, true);
+  if (r.executiveSummary) cols.innerHTML += blk('Executive Summary', `<p>${esc(r.executiveSummary)}</p>`, true);
+  document.getElementById('rec-text').textContent = r.recommendation || '';
+  document.getElementById('results').classList.add('on');
+  setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+}
+
+function trow(label, val) { return `<tr><td>${esc(label)}</td><td>${esc(val||'‚Äî')}</td></tr>`; }
+function blk(title, html, full=false) { return `<div class="content-block${full?' full':''}"><div class="block-head">${title}</div><div class="block-body">${html}</div></div>`; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function addPipeline(r, industry, address) {
+  pipeline.unshift({ grade: r.grade||'C', name: r.companyName||'Unknown', industry: industry||'‚Äî', location: address ? address.split(',').slice(-2).join(',').trim() : '‚Äî', score: r.dealScore||0, verdict: r.verdict||'‚Äî', date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) });
+  if (pipeline.length > 60) pipeline = pipeline.slice(0, 60);
+  localStorage.setItem('eta_pipeline_v3', JSON.stringify(pipeline));
+  renderPipeline();
+}
+
+function renderPipeline() {
+  const el = document.getElementById('pipeline-body');
+  if (!pipeline.length) { el.innerHTML = '<div class="pipeline-empty">No deals screened yet.</div>'; return; }
+  el.innerHTML = '<div class="pipeline-cards">' + pipeline.map(e => `<div class="pipeline-card"><div class="pipeline-grade g${e.grade}">${e.grade}</div><div class="pipeline-info"><div class="pipeline-co">${esc(e.name)}</div><div class="pipeline-sub">${esc(e.verdict)} ¬∑ ${esc(e.industry)} ¬∑ ${esc(e.date)}</div></div><div class="pipeline-score g${e.grade}">${e.score}</div></div>`).join('') + '</div>';
+}
+
+function clearPipeline() {
+  if (!confirm('Clear all pipeline entries?')) return;
+  pipeline = [];
+  localStorage.removeItem('eta_pipeline_v3');
+  renderPipeline();
+}
+
+function copyRow() {
+  if (!lastResult) return;
+  const r = lastResult;
+  const row = [r.companyName, r.inputIndustry||'', r.inputAddress||'', r.dealScore, r.grade, r.verdict, r.estimatedProfile?.revenueEstimate||'', r.estimatedProfile?.employeeEstimate||'', r.estimatedProfile?.ownerPrincipal||'', r.estimatedProfile?.googleRating||'', r.buyBoxFit?'Yes':'No', r.date].join('\t');
+  navigator.clipboard.writeText(row).then(() => showToast('Row copied ‚Äî paste into Google Sheets'));
+}
+</script>
+</body>
+</html>
