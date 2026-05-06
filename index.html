@@ -89,7 +89,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
 .loading-name { font-family: var(--serif); font-size: 20px; font-weight: 600; font-style: italic; margin-bottom: 20px; }
 .progress-lines { list-style: none; }
 .progress-lines li { font-family: var(--mono); font-size: 11px; color: var(--ink3); letter-spacing: 1px; padding: 5px 0; opacity: 0; animation: lineIn 0.4s forwards; text-transform: uppercase; }
-.progress-lines li::before { content: '‚Üí '; color: var(--ink4); }
+.progress-lines li::before { content: '→ '; color: var(--ink4); }
 .progress-lines li:nth-child(1) { animation-delay: 0.4s; }
 .progress-lines li:nth-child(2) { animation-delay: 1.8s; }
 .progress-lines li:nth-child(3) { animation-delay: 3.5s; }
@@ -138,7 +138,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
 .block-body ul { padding-left: 0; list-style: none; }
 .block-body ul li { padding: 5px 0 5px 18px; position: relative; border-bottom: 1px solid var(--paper3); }
 .block-body ul li:last-child { border-bottom: none; }
-.block-body ul li::before { content: '‚Äî'; position: absolute; left: 0; color: var(--ink4); }
+.block-body ul li::before { content: '—'; position: absolute; left: 0; color: var(--ink4); }
 
 .profile-table { width: 100%; border-collapse: collapse; }
 .profile-table tr { border-bottom: 1px solid var(--paper3); }
@@ -183,7 +183,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
 <div class="settings-bar">
   <label>API Key</label>
   <input id="api-key-input" type="password" placeholder="sk-ant-..." autocomplete="off" autocorrect="off" spellcheck="false"/>
-  <button class="sheets-btn" id="sheets-config-btn" onclick="openModal()">Sheets ‚öô</button>
+  <button class="sheets-btn" id="sheets-config-btn" onclick="openModal()">Sheets ⚙</button>
 </div>
 
 <div class="modal-overlay" id="modal">
@@ -193,7 +193,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
     <div class="field">
       <label>Apps Script Web App URL</label>
       <input id="modal-url" type="text" placeholder="https://script.google.com/macros/s/.../exec"/>
-      <div class="hint">In your Sheet: Extensions ‚Üí Apps Script ‚Üí Deploy ‚Üí New Deployment ‚Üí Web App ‚Üí Anyone ‚Üí Deploy ‚Üí Copy URL</div>
+      <div class="hint">In your Sheet: Extensions → Apps Script → Deploy → New Deployment → Web App → Anyone → Deploy → Copy URL</div>
     </div>
     <div class="modal-btns">
       <button class="modal-save" onclick="saveSheets()">Save</button>
@@ -206,7 +206,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
   <div class="masthead">
     <div class="masthead-left">
       <h1>Off-Market Deal Screener</h1>
-      <div class="sub">ETA Research Engine ¬∑ Independent Sponsor</div>
+      <div class="sub">ETA Research Engine · Independent Sponsor</div>
     </div>
     <div class="masthead-right">Mid-Atlantic / Northeast<br><span id="today-date"></span></div>
   </div>
@@ -220,7 +220,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
       </div>
       <div class="field">
         <label>Industry / Trade</label>
-        <input id="co-industry" type="text" placeholder="HVAC, Plumbing, Electrical‚Ä¶" autocorrect="off"/>
+        <input id="co-industry" type="text" placeholder="HVAC, Plumbing, Electrical…" autocorrect="off"/>
       </div>
     </div>
     <div class="field-row cols-2">
@@ -236,19 +236,19 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
     <div class="field-row">
       <div class="field">
         <label>Notes / Google Business Info</label>
-        <textarea id="co-notes" placeholder="Paste anything ‚Äî Google Business description, review snippets, employee count, services, anything from a drive-by or conversation. Leave blank for full cold research."></textarea>
+        <textarea id="co-notes" placeholder="Paste anything — Google Business description, review snippets, employee count, services, anything from a drive-by or conversation. Leave blank for full cold research."></textarea>
         <div class="hint">The less you know, the more Claude researches.</div>
       </div>
     </div>
-    <button class="buybox-toggle" id="bb-toggle" onclick="toggleBB()">‚ñ∏ Buy Box Parameters</button>
+    <button class="buybox-toggle" id="bb-toggle" onclick="toggleBB()">▸ Buy Box Parameters</button>
     <div class="buybox-panel" id="bb-panel">
       <div class="buybox-grid">
-        <div class="field"><label>Revenue Range</label><input id="bb-rev" value="$1M ‚Äì $8M"/></div>
+        <div class="field"><label>Revenue Range</label><input id="bb-rev" value="$1M – $8M"/></div>
         <div class="field"><label>EBITDA Minimum</label><input id="bb-ebitda" value="$250K+"/></div>
         <div class="field"><label>Min EBITDA Margin</label><input id="bb-margin" value="15%+"/></div>
         <div class="field"><label>Target Verticals</label><input id="bb-verticals" value="Field services, B2B, Distribution"/></div>
         <div class="field"><label>Geography</label><input id="bb-geo" value="Mid-Atlantic, Northeast US"/></div>
-        <div class="field"><label>Entry Multiple Cap</label><input id="bb-multiple" value="4‚Äì6√ó EBITDA"/></div>
+        <div class="field"><label>Entry Multiple Cap</label><input id="bb-multiple" value="4–6× EBITDA"/></div>
       </div>
     </div>
     <button class="run-btn" id="run-btn" onclick="runScreen()">Run Deal Screen</button>
@@ -277,7 +277,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
       </div>
       <div class="verdict-right">
         <div class="verdict-score" id="res-score"></div>
-        <div class="verdict-label">/ 100 ¬∑ Deal Score</div>
+        <div class="verdict-label">/ 100 · Deal Score</div>
       </div>
     </div>
     <div class="dim-strip" id="dim-strip"></div>
@@ -289,7 +289,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); mi
     <div id="sheets-status" class="sheets-status"></div>
     <div class="action-row">
       <button class="act-btn primary" onclick="copyRow()">Copy Row</button>
-      <button class="act-btn" onclick="newScreen()">‚Ü© New Screen</button>
+      <button class="act-btn" onclick="newScreen()">↩ New Screen</button>
     </div>
   </div>
 
@@ -344,7 +344,7 @@ function toggleBB() {
   const p = document.getElementById('bb-panel');
   const b = document.getElementById('bb-toggle');
   const open = p.classList.toggle('open');
-  b.textContent = (open ? '‚ñæ ' : '‚ñ∏ ') + 'Buy Box Parameters';
+  b.textContent = (open ? '▾ ' : '▸ ') + 'Buy Box Parameters';
 }
 
 function showToast(msg) {
@@ -356,7 +356,7 @@ function showToast(msg) {
 
 function showErr(msg) {
   const e = document.getElementById('err-strip');
-  e.innerHTML = '‚ö† ' + msg;
+  e.innerHTML = '⚠ ' + msg;
   e.classList.add('on');
   e.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -394,10 +394,10 @@ function buildPrompt(name, industry, address, url, notes) {
 
 TARGET COMPANY
 Name: ${name}
-Industry: ${industry || 'Unknown ‚Äî infer from research'}
+Industry: ${industry || 'Unknown — infer from research'}
 Address: ${address || 'Not provided'}
-Website: ${url || 'Not provided ‚Äî search for one'}
-Additional notes: ${notes || 'None ‚Äî conduct full cold research'}
+Website: ${url || 'Not provided — search for one'}
+Additional notes: ${notes || 'None — conduct full cold research'}
 
 BUYER BUY BOX
 Revenue: ${bb.rev} | EBITDA Min: ${bb.ebitda} | EBITDA Margin Min: ${bb.margin}
@@ -429,7 +429,7 @@ Return ONLY valid JSON. No markdown, no code fences, no text outside the JSON.
   "dimensions": [
     {"label":"Industry Quality","score":<0-10>,"note":"2 sentences"},
     {"label":"Business Model","score":<0-10>,"note":"2 sentences"},
-    {"label":"Owner Dependence","score":<0-10>,"note":"2 sentences ‚Äî higher = LESS dependent"},
+    {"label":"Owner Dependence","score":<0-10>,"note":"2 sentences — higher = LESS dependent"},
     {"label":"Competitive Moat","score":<0-10>,"note":"2 sentences"},
     {"label":"Acquirability","score":<0-10>,"note":"2 sentences"},
     {"label":"Buy Box Alignment","score":<0-10>,"note":"2 sentences"}
@@ -475,7 +475,7 @@ async function runScreen() {
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        system: 'You are a senior PE research analyst. Use web search extensively before writing your analysis. Return ONLY valid JSON ‚Äî no markdown, no backticks, no text outside the JSON object.',
+        system: 'You are a senior PE research analyst. Use web search extensively before writing your analysis. Return ONLY valid JSON — no markdown, no backticks, no text outside the JSON object.',
         messages: [{ role: 'user', content: buildPrompt(name, industry, address, url, notes) }]
       })
     });
@@ -511,7 +511,7 @@ async function writeToSheets(r, industry, address) {
   const sheetsUrl = localStorage.getItem('eta_sheets_url');
   if (!sheetsUrl) return;
   const statusEl = document.getElementById('sheets-status');
-  statusEl.textContent = '‚Üë Writing to Google Sheets...';
+  statusEl.textContent = '↑ Writing to Google Sheets...';
   statusEl.className = 'sheets-status';
   const payload = {
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
@@ -525,10 +525,10 @@ async function writeToSheets(r, industry, address) {
   };
   try {
     await fetch(sheetsUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    statusEl.textContent = '‚úì Written to Google Sheets';
+    statusEl.textContent = '✓ Written to Google Sheets';
     statusEl.className = 'sheets-status ok';
   } catch(e) {
-    statusEl.textContent = '‚úó Sheets write failed ‚Äî check your URL in ‚öô settings';
+    statusEl.textContent = '✗ Sheets write failed — check your URL in ⚙ settings';
     statusEl.className = 'sheets-status fail';
   }
 }
@@ -536,7 +536,7 @@ async function writeToSheets(r, industry, address) {
 function renderResults(r, industry, address) {
   const grade = r.grade || 'C';
   document.getElementById('res-name').textContent = r.companyName || '';
-  document.getElementById('res-meta').textContent = [r.estimatedProfile?.yearsInBusiness, r.estimatedProfile?.customerType, address ? address.split(',').slice(-2).join(',').trim() : ''].filter(Boolean).join(' ¬∑ ').toUpperCase();
+  document.getElementById('res-meta').textContent = [r.estimatedProfile?.yearsInBusiness, r.estimatedProfile?.customerType, address ? address.split(',').slice(-2).join(',').trim() : ''].filter(Boolean).join(' · ').toUpperCase();
   const scoreEl = document.getElementById('res-score');
   scoreEl.textContent = r.dealScore || 0;
   scoreEl.className = 'verdict-score ' + grade;
@@ -554,7 +554,7 @@ function renderResults(r, industry, address) {
   cols.innerHTML = '';
   const p = r.estimatedProfile || {};
   cols.innerHTML += blk('Estimated Profile', `<table class="profile-table">${trow('Website',p.website)}${trow('In Business',p.yearsInBusiness)}${trow('Owner',p.ownerPrincipal)}${trow('Employees',p.employeeEstimate)}${trow('Revenue Est.',p.revenueEstimate)}${trow('Customer Type',p.customerType)}${trow('Rev. Quality',p.revenueQuality)}${trow('Google Rating',p.googleRating)}${trow('Online',p.onlinePresence)}</table>`);
-  cols.innerHTML += blk('Business Description', `<p>${esc(p.businessModel||'‚Äî')}</p>${r.industryContext?`<p style="margin-top:12px;padding-top:12px;border-top:1px solid var(--paper3);color:var(--ink3)">${esc(r.industryContext)}</p>`:''}`);
+  cols.innerHTML += blk('Business Description', `<p>${esc(p.businessModel||'—')}</p>${r.industryContext?`<p style="margin-top:12px;padding-top:12px;border-top:1px solid var(--paper3);color:var(--ink3)">${esc(r.industryContext)}</p>`:''}`);
   if (r.positiveSignals?.length) cols.innerHTML += blk('Positive Signals', `<ul>${r.positiveSignals.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`);
   if (r.redFlags?.length) cols.innerHTML += blk('Red Flags', `<ul>${r.redFlags.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`);
   if (r.researchGaps?.length) cols.innerHTML += blk('Research Gaps', `<ul>${r.researchGaps.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`);
@@ -566,12 +566,12 @@ function renderResults(r, industry, address) {
   setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
 }
 
-function trow(label, val) { return `<tr><td>${esc(label)}</td><td>${esc(val||'‚Äî')}</td></tr>`; }
+function trow(label, val) { return `<tr><td>${esc(label)}</td><td>${esc(val||'—')}</td></tr>`; }
 function blk(title, html, full=false) { return `<div class="content-block${full?' full':''}"><div class="block-head">${title}</div><div class="block-body">${html}</div></div>`; }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function addPipeline(r, industry, address) {
-  pipeline.unshift({ grade: r.grade||'C', name: r.companyName||'Unknown', industry: industry||'‚Äî', location: address ? address.split(',').slice(-2).join(',').trim() : '‚Äî', score: r.dealScore||0, verdict: r.verdict||'‚Äî', date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) });
+  pipeline.unshift({ grade: r.grade||'C', name: r.companyName||'Unknown', industry: industry||'—', location: address ? address.split(',').slice(-2).join(',').trim() : '—', score: r.dealScore||0, verdict: r.verdict||'—', date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) });
   if (pipeline.length > 60) pipeline = pipeline.slice(0, 60);
   localStorage.setItem('eta_pipeline_v3', JSON.stringify(pipeline));
   renderPipeline();
@@ -580,7 +580,7 @@ function addPipeline(r, industry, address) {
 function renderPipeline() {
   const el = document.getElementById('pipeline-body');
   if (!pipeline.length) { el.innerHTML = '<div class="pipeline-empty">No deals screened yet.</div>'; return; }
-  el.innerHTML = '<div class="pipeline-cards">' + pipeline.map(e => `<div class="pipeline-card"><div class="pipeline-grade g${e.grade}">${e.grade}</div><div class="pipeline-info"><div class="pipeline-co">${esc(e.name)}</div><div class="pipeline-sub">${esc(e.verdict)} ¬∑ ${esc(e.industry)} ¬∑ ${esc(e.date)}</div></div><div class="pipeline-score g${e.grade}">${e.score}</div></div>`).join('') + '</div>';
+  el.innerHTML = '<div class="pipeline-cards">' + pipeline.map(e => `<div class="pipeline-card"><div class="pipeline-grade g${e.grade}">${e.grade}</div><div class="pipeline-info"><div class="pipeline-co">${esc(e.name)}</div><div class="pipeline-sub">${esc(e.verdict)} · ${esc(e.industry)} · ${esc(e.date)}</div></div><div class="pipeline-score g${e.grade}">${e.score}</div></div>`).join('') + '</div>';
 }
 
 function clearPipeline() {
@@ -594,7 +594,7 @@ function copyRow() {
   if (!lastResult) return;
   const r = lastResult;
   const row = [r.companyName, r.inputIndustry||'', r.inputAddress||'', r.dealScore, r.grade, r.verdict, r.estimatedProfile?.revenueEstimate||'', r.estimatedProfile?.employeeEstimate||'', r.estimatedProfile?.ownerPrincipal||'', r.estimatedProfile?.googleRating||'', r.buyBoxFit?'Yes':'No', r.date].join('\t');
-  navigator.clipboard.writeText(row).then(() => showToast('Row copied ‚Äî paste into Google Sheets'));
+  navigator.clipboard.writeText(row).then(() => showToast('Row copied — paste into Google Sheets'));
 }
 </script>
 </body>
